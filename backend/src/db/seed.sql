@@ -2,7 +2,7 @@ INSERT INTO users (username, email, password_hash, role)
 VALUES (
     'admin',
     'admin@devjudge.local',
-    'seed-password-hash',
+    '$2b$10$jYpBz73QETQxg85VwnkieuXX/THWgwZoFHPPlwXn6az1rx83xY0oO',
     'admin'
 )
 ON CONFLICT (email) DO NOTHING;
