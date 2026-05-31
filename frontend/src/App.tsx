@@ -1,12 +1,7 @@
-import './App.css'
+import { AppRoutes } from "./app/routes/AppRoutes.tsx";
 
 function App() {
-  return (
-    <main>
-      <h1>DevJudge</h1>
-      <p>Full stack coding judge platform</p>
-    </main>
-  )
+  return <AppRoutes />
 }
 
 export default App
