@@ -6,11 +6,11 @@ Created the first database schema for DevJudge.
 
 Added tables:
 
-- users
-- challenges
-- test-cases
-- submissions
-- user-progress
+* users
+* challenges
+* test-cases
+* submissions
+* user-progress
 
 Also added an initialization script with seed data for the first challenge.
 
@@ -41,16 +41,95 @@ Added role based access control for DevJudge.
 
 Implemented:
 
-- user/admin role separation
-- admin role middleware with `requireRole`
-- protected admin challenge routes
-- create challenge as admin
-- update challenge as admin
-- delete challenge as admin
+* user/admin role separation
+* admin role middleware with `requireRole`
+* protected admin challenge routes
+* create challenge as admin
+* update challenge as admin
+* delete challenge as admin
 
 Manual tests completed:
 
-- normal user cannot create challenges
-- admin can create challenges
-- admin can update challenges
-- admin can delete challenges
+* normal user cannot create challenges
+* admin can create challenges
+* admin can update challenges
+* admin can delete challenges
+
+## Frontend Auth Flow and Scalable Structure
+
+### Goal
+
+Build the frontend authentication flow and organize the project with a scalable feature-based structure.
+
+### Branch
+
+`feat/auth-frontend`
+
+### What I built
+
+* Added a scalable frontend folder structure using `features`, `shared`, and `app/routes`.
+* Moved auth files into `features/auth`.
+* Moved route protection files into `app/routes`.
+* Added `AuthContext`, `AuthProvider`, and `useAuth`.
+* Fixed the React Fast Refresh warning by separating context, provider, and hook.
+* Added frontend session loading using `/auth/me`.
+* Added login and register pages.
+* Added protected dashboard route.
+* Added admin-only route.
+* Added basic dashboard and admin home pages.
+* Added shared API client functions: `apiGet`, `apiPost`, `apiPut`, and `apiDelete`.
+
+### Important technical decision
+
+I decided not to keep all pages inside `src/pages` because the admin section will grow a lot.
+
+Instead, I moved the frontend to a feature-based structure:
+
+```txt
+src/
+  app/
+    routes/
+  features/
+    auth/
+    admin/
+    dashboard/
+    home/
+  shared/
+    api/
+```
+
+## Base Layout and Shared UI
+
+### Goal
+
+Create a simple but scalable frontend layout and reusable UI base before adding more feature logic.
+
+### Branch
+
+`feat/base-layout`
+
+### What I built
+
+* Added `AppLayout` for authenticated pages.
+* Added `Sidebar` navigation.
+* Added `Topbar` with user role and logout action.
+* Added shared UI components:
+
+  * `Button`
+  * `Input`
+  * `Card`
+  * `Badge`
+  * `LoadingState`
+  * `EmptyState`
+  * `ErrorState`
+* Reused shared UI inside login, register, home, dashboard, and admin pages.
+* Added a basic `/challenges` page placeholder for the next challenge listing logic.
+* Kept the UI minimal because the priority is still learning structure and behavior before final design.
+
+### Important technical decision
+
+The layout is only used inside protected routes.
+
+Public pages like `/`, `/login`, and `/register` stay outside the dashboard layout.
+
+Authenticated pages like `/dashboard`, `/challenges`, and `/admin` use `AppLayout`.

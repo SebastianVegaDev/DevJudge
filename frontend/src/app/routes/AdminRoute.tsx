@@ -1,16 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../features/auth/hooks/useAuth.ts";
+import { LoadingState } from "../../shared/ui/LoadingState/LoadingState.tsx";
 
 export function AdminRoute() {
     const { user, isAuthenticated, isLoading } = useAuth();
     const location = useLocation();
 
     if (isLoading) {
-        return (
-            <main>
-                <p>Loading session...</p>
-            </main>
-        );
+		return <LoadingState message="Loading session..." />;
     }
 
     if (!isAuthenticated) {
