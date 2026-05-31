@@ -1,21 +1,6 @@
 .dashboard-page {
-	min-height: 100vh;
-	padding: 24px;
-}
-
-.dashboard-card {
 	width: 100%;
-	max-width: 800px;
-	border: 1px solid #ccc;
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.dashboard-card h1,
-.dashboard-card p {
-	margin: 0;
+	max-width: 900px;
 }
 
 .dashboard-actions {
@@ -24,11 +9,8 @@
 	gap: 12px;
 }
 
-.dashboard-link,
-.dashboard-actions button {
+.dashboard-link {
 	border: 1px solid #ccc;
 	padding: 8px 12px;
-	background: none;
 	text-decoration: none;
-	cursor: pointer;
 }
