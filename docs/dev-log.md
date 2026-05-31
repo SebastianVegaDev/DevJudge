@@ -34,3 +34,23 @@ Added httpOnly cookie authentication using `devjudge_token`.
 Added protected route middleware with `requireAuth`.
 
 Added auth input validators for register and login.
+
+## Role based admin permissions
+
+Added role based access control for DevJudge.
+
+Implemented:
+
+- user/admin role separation
+- admin role middleware with `requireRole`
+- protected admin challenge routes
+- create challenge as admin
+- update challenge as admin
+- delete challenge as admin
+
+Manual tests completed:
+
+- normal user cannot create challenges
+- admin can create challenges
+- admin can update challenges
+- admin can delete challenges

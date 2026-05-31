@@ -5,10 +5,10 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'student',
+    role VARCHAR(20) NOT NULL DEFAULT 'user',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT users_role_check CHECK (role IN ('student', 'admin'))
+    CONSTRAINT users_role_check CHECK (role IN ('user', 'admin'))
 );
 
 CREATE TABLE IF NOT EXISTS challenges (

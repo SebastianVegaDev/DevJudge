@@ -33,7 +33,7 @@ export async function insertUser(username: string, email: string, passwordHash: 
         INSERT INTO users (username, email, password_hash, role)
         VALUES ($1, $2, $3, $4)
         RETURNING id, username, email, role, created_at;
-    `, [username, email, passwordHash, "student"]);
+    `, [username, email, passwordHash, "user"]);
 
     return rows[0];
 };
