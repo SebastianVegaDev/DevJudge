@@ -150,3 +150,13 @@ export function validateChallengeFilters(
 
     return filters;
 }
+
+export function validateId(id: string, entityName: string) {
+    if (!id.trim()) {
+        throw new Error(`${entityName} id is required`);
+    }
+
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+        throw new Error(`${entityName} id must be a valid UUID`);
+    }
+}
