@@ -12,7 +12,10 @@ INSERT INTO challenges (
     slug,
     description,
     difficulty,
+    topic,
+    language,
     starter_code,
+    function_name,
     is_published,
     created_by
 )
@@ -21,11 +24,14 @@ VALUES (
     'sum-two-numbers',
     'Given two numbers, return their sum.',
     'easy',
-    'function solve(a, b) {
+    'basics',
+    'javascript',
+    'function sum(a, b) {
     // Write your code here
     }
     
-    module.exports = solve;',
+    module.exports = sum;',
+    'sum',
     true,
     (SELECT id FROM users WHERE email = 'admin@devjudge.local')
 )
@@ -33,8 +39,12 @@ ON CONFLICT (slug) DO UPDATE SET
     title = EXCLUDED.title,
     description = EXCLUDED.description,
     difficulty = EXCLUDED.difficulty,
+    topic = EXCLUDED.topic,
+    language = EXCLUDED.language,
     starter_code = EXCLUDED.starter_code,
-    is_published = EXCLUDED.is_published;
+    function_name = EXCLUDED.function_name,
+    is_published = EXCLUDED.is_published,
+    updated_at = NOW();
 
 DELETE from test_cases
 WHERE challenge_id = (

@@ -133,3 +133,48 @@ The layout is only used inside protected routes.
 Public pages like `/`, `/login`, and `/register` stay outside the dashboard layout.
 
 Authenticated pages like `/dashboard`, `/challenges`, and `/admin` use `AppLayout`.
+
+## Challenges Backend CRUD
+
+### Goal
+
+Build the backend CRUD foundation for DevJudge challenges.
+
+### Branch
+
+`feat/challenges-crud`
+
+### What I built
+
+* Added public challenge routes.
+* Added `GET /api/challenges`.
+* Added `GET /api/challenges/:slug`.
+* Improved admin challenge create, update, and delete logic.
+* Added challenge fields:
+
+  * `topic`
+  * `language`
+  * `function_name`
+  * `updated_at`
+
+* Added reusable challenge types.
+* Added challenge input validation.
+* Added public challenge filters by search, difficulty, topic, and language.
+* Updated database schema and seed data.
+
+### Manual tests completed
+
+* Public users can list published challenges.
+* Public users can view a published challenge by slug.
+* Admin can create a challenge.
+* Admin can update a challenge.
+* Admin can delete a challenge.
+* Normal user cannot create admin challenges.
+
+### Important technical decision
+
+The public challenge module is separated from the admin challenge module.
+
+Public routes only expose published challenges.
+
+Admin routes stay protected with `requireAuth` and `requireRole("admin")`.

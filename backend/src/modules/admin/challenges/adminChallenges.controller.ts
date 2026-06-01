@@ -7,11 +7,21 @@ import {
 } from "./adminChallenges.service.js";
 
 function getErrorStatus(message: string) {
+    const normalizedMessage = message.toLowerCase();
+
+    if (normalizedMessage.includes("not found")) {
+        return 404;
+    }
+
+    if (normalizedMessage.includes("already exists")) {
+        return 409;
+    }
+
     if (
-        message.includes("required") ||
-        message.includes("Difficulty") ||
-        message.includes("Slug") ||
-        message.includes("Title")
+        normalizedMessage.includes("required") ||
+        normalizedMessage.includes("must") ||
+        normalizedMessage.includes("invalid") ||
+        normalizedMessage.includes("use lowercase")
     ) {
         return 400;
     }
@@ -23,13 +33,14 @@ export const createChallengeController: RequestHandler = async (req, res) => {
     try {
         const user = res.locals.user as AuthenticatedUser;
 
-        const challenge = await createAdminChallenge(req.body, user.id!);
+        const challenge = await createAdminChallenge(req.body, user.id);
 
         res.status(201).json({
             challenge,
         });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Internal server error";
+        const message =
+            error instanceof Error ? error.message : "Internal server error";
 
         res.status(getErrorStatus(message)).json({
             message,
@@ -39,7 +50,11 @@ export const createChallengeController: RequestHandler = async (req, res) => {
 
 export const updateChallengeController: RequestHandler = async (req, res) => {
     try {
-        const id = req.params.id as string;
+        const id = req.params.id;
+
+        if (Array.isArray(id) || !id?.trim()) {
+            throw new Error("Challenge id is required");
+        }
 
         const challenge = await updateAdminChallenge(id, req.body);
 
@@ -47,7 +62,8 @@ export const updateChallengeController: RequestHandler = async (req, res) => {
             challenge,
         });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Internal server error";
+        const message =
+            error instanceof Error ? error.message : "Internal server error";
 
         res.status(getErrorStatus(message)).json({
             message,
@@ -57,7 +73,11 @@ export const updateChallengeController: RequestHandler = async (req, res) => {
 
 export const deleteChallengeController: RequestHandler = async (req, res) => {
     try {
-        const id = req.params.id as string;
+        const id = req.params.id;
+
+        if (Array.isArray(id) || !id?.trim()) {
+            throw new Error("Challenge id is required");
+        }
 
         const challenge = await deleteAdminChallenge(id);
 
@@ -66,7 +86,8 @@ export const deleteChallengeController: RequestHandler = async (req, res) => {
             challenge,
         });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Internal server error";
+        const message =
+            error instanceof Error ? error.message : "Internal server error";
 
         res.status(getErrorStatus(message)).json({
             message,
