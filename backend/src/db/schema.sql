@@ -17,12 +17,17 @@ CREATE TABLE IF NOT EXISTS challenges (
     slug VARCHAR(140) NOT NULL UNIQUE,
     description TEXT NOT NULL,
     difficulty VARCHAR(20) NOT NULL,
+    topic VARCHAR(80) NOT NULL DEFAULT 'general',
+    language VARCHAR(30) NOT NULL DEFAULT 'javascript',
     starter_code TEXT NOT NULL,
+    function_name VARCHAR(80) NOT NULL DEFAULT 'solve',
     is_published BOOLEAN NOT NULL DEFAULT false,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT challenges_difficulty_check CHECK (difficulty IN ('easy', 'medium', 'hard'))
+    CONSTRAINT challenges_difficulty_check CHECK (difficulty IN ('easy', 'medium', 'hard')),
+    CONSTRAINT challenges_language_check CHECK (language IN ('javascript', 'typescript', 'sql'))
 );
 
 CREATE TABLE IF NOT EXISTS test_cases (
@@ -78,7 +83,34 @@ CREATE TABLE IF NOT EXISTS user_progress (
     CONSTRAINT user_progress_best_score_check CHECK (best_score >= 0 AND best_score <= 100)
 );
 
+ALTER TABLE challenges
+ADD COLUMN IF NOT EXISTS topic VARCHAR(80) NOT NULL DEFAULT 'general';
+
+ALTER TABLE challenges
+ADD COLUMN IF NOT EXISTS language VARCHAR(30) NOT NULL DEFAULT 'javascript';
+
+ALTER TABLE challenges
+ADD COLUMN IF NOT EXISTS function_name VARCHAR(80) NOT NULL DEFAULT 'solve';
+
+ALTER TABLE challenges
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+UPDATE challenges
+SET language = 'javascript'
+WHERE language = 'javascrpt';
+
+ALTER TABLE challenges
+DROP CONSTRAINT IF EXISTS challenges_language_check;
+
+ALTER TABLE challenges
+ADD CONSTRAINT challenges_language_check
+CHECK (language IN ('javascript', 'typescript', 'sql'));
+
 CREATE INDEX IF NOT EXISTS idx_challenges_slug ON challenges(slug);
+CREATE INDEX IF NOT EXISTS idx_challenges_is_published ON challenges(is_published);
+CREATE INDEX IF NOT EXISTS idx_challenges_topic ON challenges(topic);
+CREATE INDEX IF NOT EXISTS idx_challenges_language ON challenges(language);
+CREATE INDEX IF NOT EXISTS idx_challenges_difficulty ON challenges(difficulty); 
 CREATE INDEX IF NOT EXISTS idx_tests_cases_challenge_id ON test_cases(challenge_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_user_id ON submissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_challenge_id ON submissions(challenge_id);

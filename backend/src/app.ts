@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js"
 import authRoutes from "./modules/auth/auth.routes.js";
+import challengeRoutes from "./modules/challenges/challenges.routes.js";
 import adminChallengeRoutes from "./modules/admin/challenges/adminChallenges.routes.js";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/challenges", challengeRoutes);
 app.use("/api/admin/challenges", adminChallengeRoutes);
 
 export default app;
