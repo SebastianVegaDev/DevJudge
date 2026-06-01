@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../auth/hooks/useAuth";
-import { Card } from "../../../shared/ui/Card/Card";
+import { useAuth } from "../../auth/hooks/useAuth.ts";
+import { Card } from "../../../shared/ui/Card/Card.tsx";
 import "./AdminHomePage.css";
 
 export function AdminHomePage() {
@@ -18,11 +18,11 @@ export function AdminHomePage() {
 					<article className="admin-home-box">
 						<h2>Challenges</h2>
 						<p>Create and manage coding challenges.</p>
-						<Link to="/challenges">Open challenges</Link>
+						<Link to="/admin/challenges">Open challenges</Link>
 					</article>
 					<article className="admin-home-box">
 						<h2>Test cases</h2>
-						<p>Manage visible and hidden tests later.</p>
+						<p>Manage visible and hidden tests from each challenge.</p>
 					</article>
 					<article className="admin-home-box">
 						<h2>Users</h2>

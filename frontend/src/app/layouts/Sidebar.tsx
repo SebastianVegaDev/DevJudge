@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../features/auth/hooks/useAuth";
+import { useAuth } from "../../features/auth/hooks/useAuth.ts";
 import "./Sidebar.css";
 
 export function Sidebar() {
@@ -15,7 +15,7 @@ export function Sidebar() {
                 <NavLink to="/dashboard">Dashboard</NavLink>
                 <NavLink to="/challenges">Challenges</NavLink>
 
-                {user?.role === "admin" && <NavLink to="admin">Admin</NavLink>}
+                {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
             </nav>
         </aside>
     )

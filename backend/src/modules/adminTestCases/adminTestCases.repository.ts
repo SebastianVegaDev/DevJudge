@@ -1,5 +1,5 @@
-import { pool } from "../../../config/db.js";
-import type { TestCaseInput } from "../../../types/testCase.types.js";
+import { pool } from "../../config/db.js";
+import type { TestCaseInput } from "../../types/testCase.types.js";
 
 function toJsonb(value: unknown) {
     return JSON.stringify(value);

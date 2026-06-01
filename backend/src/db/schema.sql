@@ -33,14 +33,15 @@ CREATE TABLE IF NOT EXISTS challenges (
 CREATE TABLE IF NOT EXISTS test_cases (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     challenge_id UUID NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    input TEXT NOT NULL,
-    expected_output TEXT NOT NULL,
+    input TEXT,
+    expected_output TEXT,
     input_json JSONB NOT NULL DEFAULT '{}'::jsonb,
-    expected_ouput_json JSONB NULL DEFAULT '{}'::jsonb,
+    expected_output_json JSONB NOT NULL DEFAULT '{}'::jsonb,
     is_hidden BOOLEAN NOT NULL DEFAULT true,
-    comparetor VARCHAR(40) NOT NULL DEFAULT 'exact',
+    comparator VARCHAR(40) NOT NULL DEFAULT 'exact',
     sort_order INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT test_cases_comparator_check CHECK (
         comparator IN (
@@ -93,81 +94,6 @@ CREATE TABLE IF NOT EXISTS user_progress (
 
     CONSTRAINT user_progress_unique_user_challenge UNIQUE (user_id, challenge_id),
     CONSTRAINT user_progress_best_score_check CHECK (best_score >= 0 AND best_score <= 100)
-);
-
-ALTER TABLE challenges
-ADD COLUMN IF NOT EXISTS topic VARCHAR(80) NOT NULL DEFAULT 'general';
-
-ALTER TABLE challenges
-ADD COLUMN IF NOT EXISTS language VARCHAR(30) NOT NULL DEFAULT 'javascript';
-
-ALTER TABLE challenges
-ADD COLUMN IF NOT EXISTS function_name VARCHAR(80) NOT NULL DEFAULT 'solve';
-
-ALTER TABLE challenges
-ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
-
-UPDATE challenges
-SET language = 'javascript'
-WHERE language = 'javascrpt';
-
-ALTER TABLE challenges
-DROP CONSTRAINT IF EXISTS challenges_language_check;
-
-ALTER TABLE challenges
-ADD CONSTRAINT challenges_language_check
-CHECK (language IN ('javascript', 'typescript', 'sql'));
-
-ALTER TABLE test_cases
-ADD COLUMN IF NOT EXISTS input_json JSONB;
-
-ALTER TABLE test_cases
-ADD COLUMN IF NOT EXISTS expected_output_json JSONB;
-
-UPDATE test_cases
-SET input_json = COALESCE(input_json, to_jsonb(input))
-WHERE input_json IS NULL AND input IS NOT NULL;
-
-UPDATE test_cases
-SET expected_output_json = COALESCE(expected_output_json, to_jsonb(expected_output))
-WHERE expected_output_json IS NULL AND expected_output IS NOT NULL;
-
-ALTER TABLE test_cases
-ALTER COLUMN input_json SET DEFAULT '{}'::jsonb;
-
-ALTER TABLE test_cases
-ALTER COLUMN expected_output_json SET DEFAULT '{}'::jsonb;
-
-ALTER TABLE test_cases
-ALTER COLUMN input_json SET NOT NULL;
-
-ALTER TABLE test_cases
-ALTER COLUMN expected_output_json SET NOT NULL;
-
-ALTER TABLE test_cases
-ADD COLUMN IF NOT EXISTS comparator VARCHAR(40) NOT NULL DEFAULT 'exact';
-
-ALTER TABLE test_cases
-ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
-
-ALTER TABLE test_cases
-ALTER COLUMN input DROP NOT NULL;
-
-ALTER TABLE test_cases
-ALTER COLUMN expected_output DROP NOT NULL;
-
-ALTER TABLE test_cases
-DROP CONSTRAINT IF EXISTS test_cases_comparator_check;
-
-ALTER TABLE test_cases
-ADD CONSTRAINT test_cases_comparator_check
-CHECK (
-    comparator IN (
-        'exact',
-        'array_exact',
-        'array_unordered',
-        'number_tolerance'
-    )
 );
 
 CREATE INDEX IF NOT EXISTS idx_challenges_slug ON challenges(slug);
