@@ -178,3 +178,12 @@ The public challenge module is separated from the admin challenge module.
 Public routes only expose published challenges.
 
 Admin routes stay protected with `requireAuth` and `requireRole("admin")`.
+
+## Test cases backend
+
+- Added admin test case backend module.
+- Added JSONB fields for challenge inputs and expected outputs.
+- Added comparator validation: exact, array_exact, array_unordered, number_tolerance.
+- Added admin endpoints to list, create, update, and delete test cases.
+- Kept legacy input and expected_output columns for compatibility.
+- Manual tested admin CRUD with curl.

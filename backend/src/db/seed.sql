@@ -55,28 +55,40 @@ INSERT INTO test_cases (
     challenge_id,
     input,
     expected_output,
+    input_json,
+    expected_output_json,
     is_hidden,
+    comparator,
     sort_order
 )
 VALUES
 (
     (SELECT id FROM challenges WHERE slug = 'sum-two-numbers'),
-    '1 2',
+    '[1, 2]',
     '3',
+    '[1, 2]'::jsonb,
+    '3'::jsonb,
     false,
+    'exact',
     1
 ),
 (
     (SELECT id FROM challenges WHERE slug = 'sum-two-numbers'),
-    '10 15',
+    '[10, 15]',
     '25',
+    '[10, 15]'::jsonb,
+    '25'::jsonb,
     false,
+    'exact',
     2
 ),
 (
     (SELECT id FROM challenges WHERE slug = 'sum-two-numbers'),
-    '-5 12',
+    '[-5, 12]',
     '7',
-    false,
+    '[-5, 12]'::jsonb,
+    '7'::jsonb,
+    true,
+    'exact',
     3
 );
