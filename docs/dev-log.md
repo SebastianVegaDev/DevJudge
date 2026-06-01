@@ -187,3 +187,12 @@ Admin routes stay protected with `requireAuth` and `requireRole("admin")`.
 - Added admin endpoints to list, create, update, and delete test cases.
 - Kept legacy input and expected_output columns for compatibility.
 - Manual tested admin CRUD with curl.
+
+## Admin challenges panel
+
+- Added admin pages to create, edit, publish and delete challenges.
+- Added admin pages to create, edit and delete visible/hidden test cases.
+- Moved the frontend admin challenge feature to `features/adminChallenges` to avoid nested folders.
+- Moved backend admin challenge modules to flatter folders: `modules/adminChallenges` and `modules/adminTestCases`.
+- Kept the CSS simple with px values and basic flex layouts.
+

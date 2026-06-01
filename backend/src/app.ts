@@ -5,8 +5,8 @@ import cookieParser from "cookie-parser";
 import healthRoutes from "./routes/health.routes.js"
 import authRoutes from "./modules/auth/auth.routes.js";
 import challengeRoutes from "./modules/challenges/challenges.routes.js";
-import adminChallengeRoutes from "./modules/admin/challenges/adminChallenges.routes.js";
-import adminTestCaseRoutes from "./modules/admin/testCases/adminTestCases.routes.js";
+import adminChallengeRoutes from "./modules/adminChallenges/adminChallenges.routes.js";
+import adminTestCaseRoutes from "./modules/adminTestCases/adminTestCases.routes.js";
 
 const app = express();
 

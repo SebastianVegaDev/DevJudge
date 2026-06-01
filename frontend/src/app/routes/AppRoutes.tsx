@@ -1,5 +1,8 @@
 import { Navigate, Routes, Route } from "react-router-dom";
-import { AppLayout } from "../layouts/AppLayout.tsx"
+import { AppLayout } from "../layouts/AppLayout.tsx";
+import { AdminChallengeFormPage } from "../../features/adminChallenges/pages/AdminChallengeFormPage.tsx";
+import { AdminChallengesPage } from "../../features/adminChallenges/pages/AdminChallengesPage.tsx";
+import { AdminTestCasesPage } from "../../features/adminChallenges/pages/AdminTestCasesPage.tsx";
 import { AdminHomePage } from "../../features/admin/pages/AdminHomePage.tsx";
 import { LoginPage } from "../../features/auth/pages/LoginPage.tsx";
 import { RegisterPage } from "../../features/auth/pages/RegisterPage.tsx";
@@ -24,6 +27,10 @@ export function AppRoutes() {
             <Route element={<AdminRoute />}>
 				<Route element={<AppLayout />}>
                     <Route path="/admin" element={<AdminHomePage />} />
+                    <Route path="/admin/challenges" element={<AdminChallengesPage />} />
+                    <Route path="/admin/challenges/new" element={<AdminChallengeFormPage />} />
+                    <Route path="/admin/challenges/:id/edit" element={<AdminChallengeFormPage />} />
+                    <Route path="/admin/challenges/:id/test-cases" element={<AdminTestCasesPage />} />
 				</Route>
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

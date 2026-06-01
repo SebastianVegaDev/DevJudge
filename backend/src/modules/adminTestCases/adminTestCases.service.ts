@@ -1,4 +1,4 @@
-import { validateTestCaseInput } from "../../../validators/testCase.validators.js";
+import { validateTestCaseInput } from "../../validators/testCase.validators.js";
 import {
     deleteTestCaseById,
     findChallengeById,
@@ -6,7 +6,7 @@ import {
     insertTestCase,
     updateTestCaseById,
 } from "./adminTestCases.repository.js";
-import { validateId } from "../../../validators/challenge.validators.js";
+import { validateId } from "../../validators/challenge.validators.js";
 
 export async function listAdminTestCases(challengeId: string) {
     validateId(challengeId, "Challenge");
