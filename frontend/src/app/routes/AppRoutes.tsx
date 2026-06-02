@@ -11,6 +11,7 @@ import { DashboardPage } from "../../features/dashboard/pages/DashboardPage.tsx"
 import { HomePage } from "../../features/home/pages/HomePage.tsx";
 import { AdminRoute } from "./AdminRoute.tsx";
 import { ProtectedRoute } from "./ProtectedRoute.tsx";
+import { ChallengeDetailPage } from "../../features/challenges/pages/ChallengeDetailPage.tsx";
 
 export function AppRoutes() {
     return (
@@ -22,6 +23,7 @@ export function AppRoutes() {
 				<Route element={<AppLayout />}>
 					<Route path="/dashboard" element={<DashboardPage />} />
 					<Route path="/challenges" element={<ChallengesPage />} />
+					<Route path="/challenges/:slug" element={<ChallengeDetailPage />} />
 				</Route>
             </Route>
             <Route element={<AdminRoute />}>

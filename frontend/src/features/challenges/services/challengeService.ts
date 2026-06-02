@@ -2,11 +2,16 @@ import { apiGet } from "../../../shared/api/apiClient.ts";
 import type { 
     ChallengeFilters,
     PublicChallenge,
+    PublicChallengeDetail,
 } from "../types/challenge.types.ts";
 
 type ChallengesResponse = {
     challenges: PublicChallenge[];
-}
+};
+
+type ChallengeResponse = {
+    challenge: PublicChallengeDetail;
+};
 
 function buildChallengeQuery(filters: ChallengeFilters) {
     const params = new URLSearchParams();
@@ -38,5 +43,11 @@ export const challengeService = {
         const data = await apiGet<ChallengesResponse>(`/challenges${query}`);
         
         return data.challenges;
+    },
+
+    async getChallengeBySlug(slug: string) {
+        const data = await apiGet<ChallengeResponse>(`/challenges/${encodeURIComponent(slug)}`);
+
+        return data.challenge;
     },
 };

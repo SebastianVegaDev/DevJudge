@@ -238,3 +238,50 @@ Admin pages are used to create and manage challenges.
 The public `ChallengesPage` only reads published challenges and shows them to users.
 
 The solved/unsolved state is currently a placeholder because real progress tracking will be added later with submissions and user progress.
+
+
+## Challenge detail page
+
+### Goal
+
+Build the challenge detail page where a user can read a challenge and prepare a solution.
+
+### Branch
+
+`feat/challenge-detail-page`
+
+### What I built
+
+* Added `ChallengeDetailPage`.
+* Added the protected route `/challenges/:slug`.
+* Connected the page to the existing backend endpoint `GET /api/challenges/:slug`.
+* Added frontend type `PublicChallengeDetail` with `starter_code`.
+* Added `getChallengeBySlug` to the public challenge service.
+* Updated `ChallengeCard` to link to the detail page.
+* Displayed challenge title, slug, description, difficulty, topic, language, function name, and starter code.
+* Added a simple textarea editor for the user's solution.
+* Added a fake local `Run tests` action that creates a pending result.
+* Added a local attempt history.
+* Added a reset button to restore the original starter code.
+* Kept the UI simple with basic cards, borders, flex, grid, and textarea.
+
+### Manual tests completed
+
+* Logged in as a normal user.
+* Opened `/challenges`.
+* Clicked `Open challenge`.
+* Confirmed `/challenges/:slug` loads the correct challenge.
+* Confirmed starter code appears in the page.
+* Edited the solution textarea.
+* Clicked `Run tests`.
+* Confirmed the result panel shows a pending result.
+* Confirmed attempt history shows the local attempt.
+* Confirmed `Reset code` restores the original starter code.
+
+### Important technical decision
+
+I did not create backend submissions in this step.
+
+Only prepares the solving screen.
+
+The result and attempt history are local fake/pending data for now because real submissions, stored attempts, and backend judge logic start later.
