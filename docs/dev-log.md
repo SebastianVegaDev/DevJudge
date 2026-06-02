@@ -196,3 +196,45 @@ Admin routes stay protected with `requireAuth` and `requireRole("admin")`.
 - Moved backend admin challenge modules to flatter folders: `modules/adminChallenges` and `modules/adminTestCases`.
 - Kept the CSS simple with px values and basic flex layouts.
 
+## Public challenges list
+
+### Goal
+
+Build the public challenges page where authenticated users can see available published challenges.
+
+### Branch
+
+`feat/public-challenges-list`
+
+### What I built
+
+* Added public challenge frontend types.
+* Added challenge service to fetch published challenges from the backend.
+* Added query filters for search, difficulty, topic, and language.
+* Added `ChallengeCard` component to display challenge information.
+* Updated `ChallengesPage` to load real challenges from the backend.
+* Added loading, error, empty, and list states.
+* Displayed basic solved/unsolved status as a frontend placeholder for now.
+* Kept the CSS simple with px values and basic flex layouts.
+
+### Manual tests completed
+
+* Logged in as a normal user.
+* Opened `/challenges`.
+* Confirmed published challenges are loaded from the backend.
+* Tested search by challenge title.
+* Tested filter by difficulty.
+* Tested filter by topic.
+* Tested filter by language.
+* Confirmed empty state appears when no challenge matches the filters.
+* Confirmed the page still works after refreshing.
+
+### Important technical decision
+
+The public challenge feature is separated from the admin challenge feature.
+
+Admin pages are used to create and manage challenges.
+
+The public `ChallengesPage` only reads published challenges and shows them to users.
+
+The solved/unsolved state is currently a placeholder because real progress tracking will be added later with submissions and user progress.
