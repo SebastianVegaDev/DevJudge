@@ -1,7 +1,7 @@
 import { pool } from "../../config/db.js";
 import type { AuthenticatedUser } from "../../types/auth.types.js";
 import type { ChallengeLanguage } from "../../types/challenge.types.js";
-import type { Submission } from "../../types/submission.types.js";
+import type { Submission, SubmissionStatus } from "../../types/submission.types.js";
 
 type PublishedChallengeForSubmission = {
     id: string;
@@ -14,6 +14,14 @@ type InsertSubmissionInput = {
     language: ChallengeLanguage;
     code: string;
     totalTests: number;
+}
+
+type UpsertUserProgressInput = {
+    userId: string;
+    challengeId: string;
+    submissionId: string;
+    status: SubmissionStatus;
+    score: number;
 }
 
 const submissionSelect = `
@@ -117,4 +125,43 @@ export async function findSubmissionByIdForUser(submissionId: string, user: Auth
     `, values);
 
     return rows[0] ?? null;
+}
+
+export async function upsertUserProgressFromSubmission(input: UpsertUserProgressInput) {
+    await pool.query(`
+        INSERT INTO user_progress (
+            user_id,
+            challenge_id,
+            solver,
+            best_score,
+            attempts_count,
+            last_submission_id,
+            last_attempt_at,
+            updated_at
+        )
+        VALUES (
+            $1,
+            $2,
+            $3 = 'accepted',
+            $4,
+            1,
+            $5,
+            NOW(),
+            NOW()
+        )
+        ON CONFLICT (user_id, challenge_id)
+        DO UPDATE SET
+            solved = user_progress.solved OR EXCLUDED.solved,
+            best_score = GREATEST(user_progress.best_score, EXCLUDED.best_score),
+            attempts_count = user_progress.attempts_count + 1,
+            last_submission_id = EXCLUDED.last_submission_id,
+            last_attempt_at = EXCLUDED.last_attempt_at,
+            updated_at = NOW();
+    `, [
+        input.userId,
+        input.challengeId,
+        input.status,
+        input.score,
+        input.submissionId,
+    ])
 }

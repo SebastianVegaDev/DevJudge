@@ -71,30 +71,29 @@ CREATE TABLE IF NOT EXISTS submissions (
     CONSTRAINT submissions_status_check CHECK (
         status in (
             'pending',
-            'running',
             'accepted',
             'wrong_answer',
             'runtime_error',
-            'time_limit_error',
-            'compilation_error'
+            'timeout'
         )
     ),
 
-    CONSTRAINT submissions_score_check CHECK (score >= 0 AND score <= 100)
+    CONSTRAINT submissions_score_check CHECK (score >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS user_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     challenge_id UUID NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    best_score INTEGER NOT NULL DEFAULT 0,
     solved BOOLEAN NOT NULL DEFAULT false,
-    attempts INTEGER NOT NULL DEFAULT 0,
+    best_score INTEGER NOT NULL DEFAULT 0,
+    attempts_count INTEGER NOT NULL DEFAULT 0,
     last_submission_id UUID REFERENCES submissions(id) ON DELETE SET NULL,
+    last_attempt_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT user_progress_unique_user_challenge UNIQUE (user_id, challenge_id),
-    CONSTRAINT user_progress_best_score_check CHECK (best_score >= 0 AND best_score <= 100)
+    CONSTRAINT user_progress_best_score_check CHECK (best_score >= 0)
 );
 
 CREATE INDEX IF NOT EXISTS idx_challenges_slug ON challenges(slug);
@@ -106,3 +105,4 @@ CREATE INDEX IF NOT EXISTS idx_tests_cases_challenge_id ON test_cases(challenge_
 CREATE INDEX IF NOT EXISTS idx_submissions_user_id ON submissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_challenge_id ON submissions(challenge_id);
 CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON user_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_progress_challenge_id ON user_progress(challenge_id);

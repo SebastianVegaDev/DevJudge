@@ -7,6 +7,7 @@ import {
     findPublishedChallengeForSubmission,
     findSubmissionByIdForUser,
     insertSubmission,
+    upsertUserProgressFromSubmission,
 } from "./submissions.repository.js";
 
 export async function createSubmission(challengeId: string, payload: unknown, user: AuthenticatedUser) {
@@ -21,13 +22,23 @@ export async function createSubmission(challengeId: string, payload: unknown, us
 
     const totalTests = await countChallengeTestCases(challengeId);
 
-    return insertSubmission({
+    const submission = await insertSubmission({
         userId: user.id,
         challengeId: challenge.id,
         language: challenge.language,
         code: input.code,
         totalTests,
     });
+
+    await upsertUserProgressFromSubmission({
+        userId: user.id,
+        challengeId: challenge.id,
+        submissionId: submission.id,
+        status: submission.status,
+        score: submission.score,
+    });
+
+    return submission
 }
 
 export async function listMySubmissions(challengeId: string, userId: string) {
