@@ -1,6 +1,7 @@
-import { apiGet } from "../../../shared/api/apiClient.ts";
+import { apiGet, apiPost } from "../../../shared/api/apiClient.ts";
 import type { 
     ChallengeFilters,
+    ChallengeSubmission,
     PublicChallenge,
     PublicChallengeDetail,
 } from "../types/challenge.types.ts";
@@ -12,6 +13,18 @@ type ChallengesResponse = {
 type ChallengeResponse = {
     challenge: PublicChallengeDetail;
 };
+
+type SubmissionResponse = {
+    submission: ChallengeSubmission;
+}
+
+type SubmissionsResponse = {
+    submissions: ChallengeSubmission[];
+}
+
+type createSubmissionPayload = {
+    code: string;
+}
 
 function buildChallengeQuery(filters: ChallengeFilters) {
     const params = new URLSearchParams();
@@ -50,4 +63,21 @@ export const challengeService = {
 
         return data.challenge;
     },
+
+    async createSubmission(challengeId: string, payload: createSubmissionPayload) {
+        const data = await apiPost<SubmissionResponse, createSubmissionPayload>(
+            `/challenges/${challengeId}/submissions`,
+            payload
+        );
+
+        return data.submission;
+    },
+
+    async getMySubmissions(challengeId: string) {
+        const data = await apiGet<SubmissionsResponse>(
+            `/challenges/${challengeId}/submissions/me`
+        );
+
+        return data.submissions;
+    }
 };

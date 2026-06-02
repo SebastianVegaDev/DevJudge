@@ -20,6 +20,28 @@ export type PublicChallengeDetail = PublicChallenge & {
     starter_code: string;
 };
 
+export type SubmissionStatus =
+    | "pending"
+    | "accepted"
+    | "wrong_anser"
+    | "runtime_error"
+    | "timeout";
+
+export type ChallengeSubmission = {
+    id: string;
+    user_id: string;
+    challenge_id: string;
+    language: ChallengeLanguage;
+    code: string;
+    status: SubmissionStatus;
+    passed_tests: number;
+    total_tests: number;
+    score: number;
+    runtime_ms: number | null;
+    error_message: string | null;
+    created_at: string;
+}
+
 export type ChallengeFilters = {
     search: string;
     difficulty: ChallengeDifficulty | "";
