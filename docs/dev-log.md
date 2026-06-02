@@ -357,3 +357,39 @@ The submission starts with:
 * `runtime_ms = null`
 
 The real judge execution will be added later.
+
+## Basic user progress tracking
+
+### Goal
+
+Add basic progress tracking when a user creates a submission.
+
+### Branch
+
+`feat/user-progress-basic`
+
+### What I built
+
+* Updated the `user_progress` table structure.
+* Added `attempts_count`.
+* Added `last_submission_id`.
+* Added `last_attempt_at`.
+* Added progress update logic after creating a submission.
+* Used `ON CONFLICT (user_id, challenge_id)` to keep one progress row per user and challenge.
+* Updated submission status types to stay consistent between backend and frontend.
+* Removed the upper score limit because future scoring can be higher than 100 points.
+
+### Manual tests completed
+
+* Created a submission for a published challenge.
+* Confirmed a `user_progress` row is created.
+* Created another submission for the same challenge.
+* Confirmed `attempts_count` increases.
+* Confirmed `last_submission_id` changes to the latest submission.
+* Confirmed `last_attempt_at` updates.
+
+### Important technical decision
+
+The controller does not update progress directly.
+
+The submission service owns this rule because progress tracking is part of the submission business flow.

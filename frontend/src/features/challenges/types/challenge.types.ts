@@ -23,7 +23,7 @@ export type PublicChallengeDetail = PublicChallenge & {
 export type SubmissionStatus =
     | "pending"
     | "accepted"
-    | "wrong_anser"
+    | "wrong_answer"
     | "runtime_error"
     | "timeout";
 

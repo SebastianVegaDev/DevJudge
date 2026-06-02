@@ -1,16 +1,14 @@
 import type { ChallengeLanguage } from "./challenge.types.js";
 
-export const submissionStatus = [
+export const SubmissionStatus = [
     "pending",
-    "running",
     "accepted",
     "wrong_answer",
     "runtime_error",
-    "time_limit_error",
-    "compilation_error",
+    "timeout",
 ] as const;
 
-export type SubmissionStatus = (typeof submissionStatus)[number];
+export type SubmissionStatus = (typeof SubmissionStatus)[number];
 
 export type CreateSubmissionInput = {
     code: string;
