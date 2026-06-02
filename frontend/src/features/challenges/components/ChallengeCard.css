@@ -27,3 +27,10 @@
 	flex-wrap: wrap;
 	gap: 8px;
 }
+
+.challenge-card-link {
+	border: 1px solid #ccc;
+	padding: 8px 12px;
+	text-decoration: none;
+	width: fit-content;
+}

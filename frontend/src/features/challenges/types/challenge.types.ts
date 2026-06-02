@@ -16,6 +16,10 @@ export type PublicChallenge = {
     solved?: boolean;
 };
 
+export type PublicChallengeDetail = PublicChallenge & {
+    starter_code: string;
+};
+
 export type ChallengeFilters = {
     search: string;
     difficulty: ChallengeDifficulty | "";
