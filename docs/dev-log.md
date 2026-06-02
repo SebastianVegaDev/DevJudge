@@ -285,3 +285,75 @@ I did not create backend submissions in this step.
 Only prepares the solving screen.
 
 The result and attempt history are local fake/pending data for now because real submissions, stored attempts, and backend judge logic start later.
+
+## Challenge submissions
+
+### Goal
+
+Add real submission storage for challenge attempts.
+
+### Branch
+
+`feat/submissions-backend`
+
+### What I built
+
+* Added backend submissions module.
+* Added submission types.
+* Added submission input validation.
+* Added repository functions to create and read submissions.
+* Added service logic to validate challenge ids and user ownership.
+* Added protected endpoint to create a submission:
+
+  * `POST /api/challenges/:id/submissions`
+
+* Added protected endpoint to list my submissions for one challenge:
+
+  * `GET /api/challenges/:id/submissions/me`
+
+* Added protected endpoint to read one submission:
+
+  * `GET /api/submissions/:id`
+
+* Updated the database schema with `runtime_ms`.
+* Updated submission statuses to match the judge roadmap:
+
+  * `pending`
+  * `accepted`
+  * `wrong_answer`
+  * `runtime_error`
+  * `timeout`
+
+* Connected the challenge detail page to real submissions.
+* Replaced the local fake attempt history with saved PostgreSQL submissions.
+* Fixed the challenge detail CSS import.
+
+### Manual tests completed
+
+* Ran `npm run db:init`.
+* Logged in with cookie authentication.
+* Created a submission with curl.
+* Confirmed the submission is saved with status `pending`.
+* Confirmed `total_tests` is calculated from existing test cases.
+* Listed my submissions for a challenge.
+* Read one submission by id.
+* Opened a challenge in the frontend.
+* Clicked `Run tests`.
+* Confirmed the pending submission appears in the result panel.
+* Refreshed the page.
+* Confirmed attempt history persists.
+
+### Important technical decision
+
+I did not implement the real judge yet.
+
+Day 13 only stores submissions.
+
+The submission starts with:
+
+* `status = pending`
+* `passed_tests = 0`
+* `score = 0`
+* `runtime_ms = null`
+
+The real judge execution will be added later.

@@ -1,38 +1,32 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Badge } from "../../../shared/ui/Badge/Badge.tsx";
-import { Button } from "../../../shared/ui/Button/Button.tsx";
+import { useParams } from "react-router-dom";
 import { Card } from "../../../shared/ui/Card/Card.tsx";
 import { EmptyState } from "../../../shared/ui/EmptyState/EmptyState.tsx";
 import { ErrorState } from "../../../shared/ui/ErrorState/ErrorState.tsx";
 import { LoadingState } from "../../../shared/ui/LoadingState/LoadingState.tsx";
+import { ChallengeAttemptHistory } from "../components/ChallengeDetail//ChallengeAttemptHistory.tsx";
+import { ChallengeCodeWorkspace } from "../components/ChallengeDetail//ChallengeCodeWorkspace.tsx";
+import { ChallengeDetailHeader } from "../components/ChallengeDetail/ChallengeDetailHeader.tsx";
+import { ChallengeOverviewCard } from "../components/ChallengeDetail//ChallengeOverviewCard.tsx";
+import { ChallengeResultPanel } from "../components/ChallengeDetail//ChallengeResultPanel.tsx";
 import { challengeService } from "../services/challengeService.ts";
-import type { PublicChallengeDetail } from "../types/challenge.types.ts";
-import "./ChallengesPage.css";
-
-type LocalAttempt = {
-	id: string;
-	status: "pending";
-	code: string;
-	createdAt: string;
-	passedTests: number;
-	totalTests: number;
-	message: string;
-};
-
-function createAttemptId() {
-	return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
+import type {
+	ChallengeSubmission,
+	PublicChallengeDetail,
+} from "../types/challenge.types.ts";
+import "./ChallengeDetailPage.css";
 
 export function ChallengeDetailPage() {
-    const { slug } = useParams();
+	const { slug } = useParams();
 
 	const [challenge, setChallenge] = useState<PublicChallengeDetail | null>(null);
 	const [code, setCode] = useState("");
-	const [attempts, setAttempts] = useState<LocalAttempt[]>([]);
-	const [currentResult, setCurrentResult] = useState<LocalAttempt | null>(null);
+	const [submissions, setSubmissions] = useState<ChallengeSubmission[]>([]);
+	const [currentResult, setCurrentResult] = useState<ChallengeSubmission | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
+	const [submissionError, setSubmissionError] = useState("");
 
 	useEffect(() => {
 		if (!slug) {
@@ -41,23 +35,29 @@ export function ChallengeDetailPage() {
 			return;
 		}
 
+		const challengeSlug = slug;
 		let isActive = true;
 
 		async function loadChallenge() {
 			setIsLoading(true);
 			setError("");
+			setSubmissionError("");
 
 			try {
-				const data = await challengeService.getChallengeBySlug(slug);
+				const challengeData = await challengeService.getChallengeBySlug(challengeSlug);
+				const submissionData = await challengeService.getMySubmissions(
+					challengeData.id
+				);
 
 				if (isActive) {
-					setChallenge(data);
-					setCode(data.starter_code);
-					setAttempts([]);
-					setCurrentResult(null);
+					setChallenge(challengeData);
+					setCode(challengeData.starter_code);
+					setSubmissions(submissionData);
+					setCurrentResult(submissionData[0] ?? null);
 				}
 			} catch (error) {
-				const message = error instanceof Error ? error.message : "Could not load challenge";
+				const message =
+					error instanceof Error ? error.message : "Could not load challenge";
 
 				if (isActive) {
 					setError(message);
@@ -76,150 +76,78 @@ export function ChallengeDetailPage() {
 		};
 	}, [slug]);
 
-    function handleResetCode() {
-        if (!challenge) {
-            return;
-        }
+	function handleResetCode() {
+		if (!challenge) {
+			return;
+		}
 
-        setCode(challenge.starter_code);
-    }
-    function handleRunTests() {
-        if (!challenge) {
-            return;
-        }
+		setCode(challenge.starter_code);
+	}
 
-        const nextAttempt: LocalAttempt = {
-            id: createAttemptId(),
-            status: "pending",
-            code,
-            createdAt: new Date().toLocaleString(),
-            passedTests: 0,
-            totalTests: 0,
-            message: "submission created as pending. Real backend submissions and judge logic start later.",
-        };
+	async function handleRunTests() {
+		if (!challenge || !code.trim() || isSubmitting) {
+			return;
+		}
 
-        setCurrentResult(nextAttempt);
-        setAttempts((currentAttempts) => [nextAttempt, ...currentAttempts]);
-    }
+		setIsSubmitting(true);
+		setSubmissionError("");
 
-    if (isLoading) {
-        return <LoadingState message="Loading Challenge..." />;
-    }
+		try {
+			const submission = await challengeService.createSubmission(challenge.id, {
+				code,
+			});
 
-    if (error) {
-        return <ErrorState message={error} />;
-    }
-    
-    if (!challenge) {
-        return (
-            <Card>
-                <EmptyState 
-                    title="challenge not found"
-                    description="Go back to the challenges list and choose another challenge."
-                />
-            </Card>
-        );
-    }
+			setCurrentResult(submission);
+			setSubmissions((currentSubmissions) => [
+				submission,
+				...currentSubmissions,
+			]);
+		} catch (error) {
+			const message =
+				error instanceof Error ? error.message : "Could not create submission";
 
-    return (
-        <div className="challenge-detail-page">
-            <div className="challenge-detail-header">
-                <div>
-                    <h1>{challenge.title}</h1>
-                    <p>/{challenge.slug}</p>
-                </div>
+			setSubmissionError(message);
+		} finally {
+			setIsSubmitting(false);
+		}
+	}
 
-                <Link className="challenge-detail-link" to="/challenges">
-                    Back to challenges
-                </Link>
-            </div>
+	if (isLoading) {
+		return <LoadingState message="Loading challenge..." />;
+	}
 
-            <Card>
-                <div className="challenge-detail-meta">
-                    <Badge>{challenge.difficulty}</Badge>
-                    <Badge>{challenge.topic}</Badge>
-                    <Badge>{challenge.language}</Badge>
-                    <Badge>fn: {challenge.function_name}</Badge>
-                </div>
+	if (error) {
+		return <ErrorState message={error} />;
+	}
 
-                <p className="challenge-detail-description">{challenge.description}</p>
-            </Card>
+	if (!challenge) {
+		return (
+			<Card>
+				<EmptyState
+					title="Challenge not found"
+					description="Go back to the challenges list and choose another challenge."
+				/>
+			</Card>
+		);
+	}
 
-			<div className="challenge-detail-grid">
-				<Card>
-					<h2>Starter code</h2>
-					<pre className="challenge-code-box">{challenge.starter_code}</pre>
-				</Card>
-
-				<Card>
-					<h2>Your solution</h2>
-
-					<textarea
-						className="challenge-code-editor"
-						value={code}
-						onChange={(event) => setCode(event.target.value)}
-						spellCheck={false}
-					/>
-
-					<div className="challenge-detail-actions">
-						<Button onClick={handleRunTests} disabled={!code.trim()}>
-							Run tests
-						</Button>
-
-						<Button variant="secondary" onClick={handleResetCode}>
-							Reset code
-						</Button>
-					</div>
-				</Card>
-			</div>
-
-            <Card>
-                <h2>Result panel</h2>
-
-                {currentResult ? (
-                    <div className="challenge-result-box">
-                        <div className="challenge-detail-meta">
-                            <Badge>{currentResult.status}</Badge>
-                            <Badge>{currentResult.passedTests}/{currentResult.totalTests} tests</Badge>
-                        </div>
-
-                        <p>{currentResult.message}</p>
-                    </div>
-                ) : (
-                    <EmptyState
-                        title="No result yet"
-                        description="Click Run tests to crete a pending fake attempt for now."
-                    />
-                )}
-            </Card>
-
-            <Card>
-                <h2>Attempt history</h2>
-
-                {attempts.length === 0 && (
-					<EmptyState
-						title="No attempts yet"
-						description="Your local pending attempts will appear here."
-					/>
-                )}
-
-                {attempts.length > 0 && (
-                    <div className="challenge-attempt-list">
-                        {attempts.map((attempt, index) => (
-                            <article key={attempt.id} className="challenge-attempt-item">
-                                <div className="challenge-attempt-header">
-                                    <strong>Attempt #{attempts.length - index}</strong>
-                                    <Badge>{attempt.status}</Badge>
-                                </div>
-
-                                <p className="challenge-detail-muted">{attempt.createdAt}</p>
-                                <pre className="challenge-code-box">{attempt.code}</pre>
-                            </article>
-                        ))}
-                    </div>
-                )}
-            </Card>
-        </div>
-    )
-
+	return (
+		<div className="challenge-detail-page">
+			<ChallengeDetailHeader title={challenge.title} slug={challenge.slug} />
+			<ChallengeOverviewCard challenge={challenge} />
+			<ChallengeCodeWorkspace
+				starterCode={challenge.starter_code}
+				code={code}
+				isSubmitting={isSubmitting}
+				onCodeChange={setCode}
+				onRunTests={handleRunTests}
+				onResetCode={handleResetCode}
+			/>
+			<ChallengeResultPanel
+				currentResult={currentResult}
+				submissionError={submissionError}
+			/>
+			<ChallengeAttemptHistory submissions={submissions} />
+		</div>
+	);
 }
